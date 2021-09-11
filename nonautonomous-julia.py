@@ -12,21 +12,19 @@ xmin, xmax = -2, 2
 xwidth = xmax - xmin
 ymin, ymax = -2, 2
 yheight = ymax - ymin
+
 # array to hold the different color values for the Julia set, initial values will be zero
 julia = np.zeros((im_width, im_height))
 fig, ax = plt.subplots()
 number_user_inputs = 4
-first_c_real_value = 0
-first_c_imag_value = 0
-second_c_real_value = 0
-second_c_imag_value = 0
+max_iteration_value = 125
+
+# initial values that will be changed with user input
 user_first_c_real_value = 0
 user_first_c_imag_value = 0
 user_second_c_real_value = 0
 user_second_c_imag_value = 0
-iterations_first_c_value = 15
 user_iterations_first_c_value = 15
-max_iteration_value = 125
 
 """View the Julia set for the nonautonomous complex dynamical system where the 
     first function being iterated over is z^2+first_c and the second function is z^2+second_c
@@ -35,20 +33,24 @@ max_iteration_value = 125
 def Nonautonomous_Julia_Set(first_c_real, first_c_imag, second_c_real, second_c_imag, iterations_first_c, max_iteration):
     first_c = complex(first_c_real, first_c_imag)
     second_c = complex(second_c_real, second_c_imag)
+
     for y in range(im_height):
         for x in range(im_width):
             # Find the point in the complex plane for the current pixel position
             z = complex(((x - im_width/2)*4/im_width), -((y - im_height/2)*4/im_height))
             iteration = 0
+
             # do the specified amount of iterations for the first function
             while (iteration < iterations_first_c) and (abs(z) <= z_abs):
                 z = z**2 + first_c
                 iteration += 1
+
             # finish off the rest of the iterations with the second function
             # if modulus of z > 2 then it will definitely go to infinity only check subsequent iterations if the modulus of # z <= 2
             while (abs(z) <= z_abs) and (iteration < max_iteration):
                 z = z**2 + second_c
                 iteration +=1
+
             # if it doesn't get beyond 2 for all the iterations assume it's bounded
             # need to switch x and y because of how computers deal with the coordinate system for pixels 
             if (iteration == max_iteration):
@@ -57,6 +59,7 @@ def Nonautonomous_Julia_Set(first_c_real, first_c_imag, second_c_real, second_c_
                     #the lighter it gets colored
             else:
                 julia[y, x] = math.floor((iteration/max_iteration) * 255)
+
     ax.imshow(julia, interpolation='nearest', cmap=cm.inferno)
     # Set the tick labels to the real coordinates in the complex plane ranging from xmin to xmax
     xtick_labels = np.linspace(xmin, xmax, xwidth + 1)
@@ -125,5 +128,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
